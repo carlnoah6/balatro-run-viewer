@@ -1,2 +1,3 @@
 [lint]
 ignore = ["E741"]
+ignore = ["E741", "F401"]
