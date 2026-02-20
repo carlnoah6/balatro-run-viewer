@@ -43,7 +43,8 @@ def get_database_url() -> str:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global db_pool
-    db_pool = await asyncpg.create_pool(get_database_url(), min_size=2, max_size=10)
+    db_pool = await asyncpg.create_pool(get_database_url(), min_size=2, max_size=10,
+                                         statement_cache_size=0)
     SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
     yield
     if db_pool:
@@ -825,6 +826,9 @@ async def page_strategy_detail(strategy_id: int):
     source_code = s.get("source_code") or ""
     summary = s.get("summary") or ""
 
+    github_branch = s.get("github_branch") or ""
+    github_url = f"https://github.com/carlnoah6/balatro-strategy/tree/{github_branch}" if github_branch else ""
+
     h = f"""<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>策略 {_html_escape(name)} - Balatro</title><style>{_base_css()}
@@ -841,7 +845,7 @@ pre.code{{background:#0d1117;padding:1rem;border-radius:8px;overflow-x:auto;font
 <div class="detail-header">
 <h2>🧠 {_html_escape(name)}</h2>
 <div style="font-family:monospace;font-size:.9rem;color:var(--muted);margin:.5rem 0">
-哈希: {code_hash} | 模型: {model}
+哈希: {code_hash} | 模型: {model}{f' | <a href="{github_url}" target="_blank" style="color:var(--gold)">📂 GitHub</a>' if github_url else ''}
 </div>"""
 
     # Strategy tree
