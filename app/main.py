@@ -1,4 +1,4 @@
-"""Balatro Run Viewer - FastAPI backend."""
+"""Balatro Run Viewer 🃏 - FastAPI backend."""
 
 import json
 import os
@@ -51,7 +51,7 @@ async def lifespan(app: FastAPI):
         await db_pool.close()
 
 
-app = FastAPI(title="Balatro Run Viewer", lifespan=lifespan)
+app = FastAPI(title="Balatro Run Viewer 🃏", lifespan=lifespan)
 
 # Serve screenshots as static files
 app.mount("/screenshots", StaticFiles(directory=str(SCREENSHOT_DIR)), name="screenshots")
@@ -607,7 +607,7 @@ async def page_game_detail(run_code: str):
 
     h = f"""<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{rc} - Balatro Run Viewer</title><style>{_base_css()}</style></head><body>
+<title>{rc} - Balatro Run Viewer 🃏</title><style>{_base_css()}</style></head><body>
 {_header()}<div class="container">
 <a class="back-btn" href="/balatro/">← 返回列表</a>
 <div class="detail-header"><h2>{icon} {rc}{status_badge}</h2>
@@ -1061,7 +1061,7 @@ async def page_list():
 
     h = f"""<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Balatro Run Viewer</title><style>{_base_css()}
+<title>Balatro Run Viewer 🃏</title><style>{_base_css()}
 .tabs{{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid #333}}
 .tab{{padding:.6rem 1.5rem;cursor:pointer;font-size:1rem;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}}
 .tab:hover{{color:var(--text)}}
