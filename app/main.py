@@ -562,6 +562,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')document.get
 def _html_escape(s):
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
+def _code_with_lines(code: str) -> str:
+    """Wrap each line in a span for line numbering, escape HTML."""
+    escaped = _html_escape(code)
+    lines = escaped.split("\n")
+    return "\n".join(f'<span class="line">{l}</span>' for l in lines)
+
 
 @app.get("/game/{run_code}", response_class=HTMLResponse)
 async def page_game_detail(run_code: str):
@@ -849,14 +855,21 @@ async def page_strategy_detail(strategy_id: int):
     h = f"""<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>策略 {_html_escape(name)} - Balatro</title><style>{_base_css()}
-pre.code{{background:#0d1117;padding:1rem;border-radius:8px;overflow-x:auto;font-size:.8rem;line-height:1.5;max-height:600px;overflow-y:auto;border:1px solid #333}}
+pre.code{{background:#0d1117;padding:0;border-radius:8px;overflow-x:auto;font-size:.8rem;line-height:1.6;max-height:600px;overflow-y:auto;border:1px solid #333;position:relative}}
+pre.code code{{display:block;padding:1rem 1rem 1rem 3.5rem;counter-reset:line}}
+pre.code code .line{{display:block;position:relative}}
+pre.code code .line::before{{counter-increment:line;content:counter(line);position:absolute;left:-3rem;width:2.5rem;text-align:right;color:#555;font-size:.75rem;user-select:none}}
 .tree{{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.75rem 0}}
 .tree-node{{padding:.3rem .6rem;border-radius:6px;font-size:.85rem;font-family:monospace}}
 .tree-node.current{{background:var(--accent);color:#fff;font-weight:700}}
 .tree-node.ancestor{{background:var(--surface);color:var(--muted)}}
 .tree-node.child{{background:var(--card);color:var(--gold)}}
 .tree-arrow{{color:var(--muted);font-size:.8rem}}
-</style></head><body>
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+</head><body>
 {_header()}<div class="container">
 <a class="back-btn" href="/balatro/">← 返回列表</a>
 <div class="detail-header">
@@ -901,7 +914,7 @@ pre.code{{background:#0d1117;padding:1rem;border-radius:8px;overflow-x:auto;font
             h += f'<div class="section"><h3>💻 策略代码</h3><div style="margin-bottom:.75rem"><a href="{github_url}" target="_blank" style="color:var(--gold);font-size:1rem">📂 在 GitHub 查看完整代码 →</a></div>'
         else:
             h += '<div class="section"><h3>💻 策略代码</h3>'
-        h += f'<pre class="code"><code>{_html_escape(source_code)}</code></pre></div>'
+        h += f'<pre class="code"><code class="language-python">{_code_with_lines(source_code)}</code></pre></div>'
 
     # LLM Prompt - extract from source code
     llm_prompt = ""
@@ -911,7 +924,7 @@ pre.code{{background:#0d1117;padding:1rem;border-radius:8px;overflow-x:auto;font
         if m:
             llm_prompt = m.group(1).strip()
     if llm_prompt:
-        h += f'<div class="section"><h3>🤖 LLM 提示词</h3><pre class="code"><code>{_html_escape(llm_prompt)}</code></pre></div>'
+        h += f'<div class="section"><h3>🤖 LLM 提示词</h3><pre class="code"><code class="language-markdown">{_code_with_lines(llm_prompt)}</code></pre></div>'
 
     # Runs table
     if runs:
@@ -934,7 +947,7 @@ pre.code{{background:#0d1117;padding:1rem;border-radius:8px;overflow-x:auto;font
             h += f'<td>{r.get("hands_played", 0)}</td><td>{r.get("discards_used", 0)}</td><td>{dur}</td><td>{t}</td></tr>'
         h += "</tbody></table></div>"
 
-    h += "</div></body></html>"
+    h += "</div><script>hljs.highlightAll();</script></body></html>"
     return HTMLResponse(h)
 
 
