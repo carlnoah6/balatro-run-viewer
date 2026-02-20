@@ -11,18 +11,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: |
-          docker build -t balatro-viewer:${{ github.sha }} .
-          docker save balatro-viewer:${{ github.sha }} | gzip > /tmp/image.tar.gz
+        run: docker build -t balatro-viewer:${{ github.sha }} .
 
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            cd /home/ubuntu/.openclaw/workspace/projects/balatro-run-viewer
-            git pull origin main
-            sudo systemctl restart balatro-viewer
-            echo "Deployed at $(date) - ${{ github.sha }}"
+      - name: Trigger deploy webhook
+        run: |
+          curl -s -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}" \
+            -H "Authorization: Bearer ${{ secrets.DEPLOY_WEBHOOK_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"sha": "${{ github.sha }}", "ref": "${{ github.ref }}"}'
+          echo "Deploy webhook triggered"
