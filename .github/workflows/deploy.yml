@@ -1,14 +1,19 @@
-name: Deploy Run Viewer
+name: Deploy
 
 on:
   push:
     branches: [main]
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t balatro-viewer:${{ github.sha }} .
+          docker save balatro-viewer:${{ github.sha }} | gzip > /tmp/image.tar.gz
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1
@@ -20,4 +25,4 @@ jobs:
             cd /home/ubuntu/.openclaw/workspace/projects/balatro-run-viewer
             git pull origin main
             sudo systemctl restart balatro-viewer
-            echo "Deployed at $(date)"
+            echo "Deployed at $(date) - ${{ github.sha }}"
