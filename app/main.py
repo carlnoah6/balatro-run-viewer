@@ -623,7 +623,7 @@ async def page_game_detail(run_code: str):
     else:
         err_val = "-"
 
-    for v, l in [
+    for v, lbl in [
         (f"Ante {run.get('final_ante', '?')}", "关卡"),
         (run.get("hands_played", 0), "出牌"),
         (run.get("discards_used", 0), "弃牌"),
@@ -633,7 +633,7 @@ async def page_game_detail(run_code: str):
         (dur, "耗时"),
         (cost, "LLM成本"),
     ]:
-        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{l}</div></div>'
+        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{lbl}</div></div>'
     h += "</div></div>"
 
     # Jokers
@@ -893,8 +893,8 @@ pre.code code .line::before{{counter-increment:line;content:counter(line);positi
 
     # Stats
     h += '<div class="detail-stats">'
-    for v, l in [(total, "总局数"), (wins, "胜场"), (win_rate, "胜率"), (avg_ante, "平均Ante")]:
-        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{l}</div></div>'
+    for v, lbl in [(total, "总局数"), (wins, "胜场"), (win_rate, "胜率"), (avg_ante, "平均Ante")]:
+        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{lbl}</div></div>'
     h += "</div></div>"
 
     # Summary
@@ -978,8 +978,8 @@ async def page_seed_detail(seed_val: str):
 <div class="detail-header">
 <h2>🌱 种子: <span style="font-family:monospace">{_html_escape(seed_val)}</span></h2>
 <div class="detail-stats">"""
-    for v, l in [(total, "运行次数"), (wins, "胜场"), (best_ante, "最佳Ante"), (len(strategies_used), "策略数")]:
-        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{l}</div></div>'
+    for v, lbl in [(total, "运行次数"), (wins, "胜场"), (best_ante, "最佳Ante"), (len(strategies_used), "策略数")]:
+        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{lbl}</div></div>'
     h += "</div></div>"
 
     if strategies_used:
