@@ -14,7 +14,7 @@ from contextlib import asynccontextmanager
 
 # Config
 NEON_CONFIG = Path(__file__).parent.parent.parent.parent / "data" / "neon-config.json"
-SCREENSHOT_DIR = Path("/home/ubuntu/balatro-screenshots")
+SCREENSHOT_DIR = Path(os.environ.get("SCREENSHOT_DIR", "/home/ubuntu/balatro-screenshots"))
 JOKER_DATA = Path(__file__).parent.parent / "data" / "jokers.json"
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB
 ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
@@ -36,6 +36,8 @@ db_pool: asyncpg.Pool | None = None
 
 
 def get_database_url() -> str:
+    if os.environ.get("DATABASE_URL"):
+        return os.environ["DATABASE_URL"]
     with open(NEON_CONFIG) as f:
         return json.load(f)["database_url"]
 
@@ -568,6 +570,21 @@ def _code_with_lines(code: str) -> str:
     lines = escaped.split("\n")
     return "\n".join(f'<span class="line">{l}</span>' for l in lines)
 
+BLIND_LABELS = {1: "小盲", 2: "大盲", 3: "Boss"}
+
+def _format_progress(prog: str) -> str:
+    """Format progress number: '301' → 'A3-小盲', '403' → 'A4-Boss'."""
+    if not prog:
+        return "-"
+    try:
+        n = int(prog)
+        ante = n // 100
+        blind = n % 100
+        blind_name = BLIND_LABELS.get(blind, str(blind))
+        return f"A{ante}-{blind_name}"
+    except (ValueError, TypeError):
+        return prog
+
 
 @app.get("/game/{run_code}", response_class=HTMLResponse)
 async def page_game_detail(run_code: str):
@@ -897,18 +914,11 @@ pre.code code .line::before{{counter-increment:line;content:counter(line);positi
         h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{lbl}</div></div>'
     h += "</div></div>"
 
-    # Summary
+    # 1. Summary / Description
     if summary:
-        h += f'<div class="section"><h3>📝 策略摘要</h3><div style="background:var(--surface);padding:1rem;border-radius:8px;line-height:1.6">{_html_escape(summary)}</div></div>'
+        h += f'<div class="section"><h3>📝 策略描述</h3><div style="background:var(--surface);padding:1rem;border-radius:8px;line-height:1.8;white-space:pre-wrap">{_html_escape(summary)}</div></div>'
 
-    # Params
-    if params:
-        h += '<div class="section"><h3>⚙️ 参数</h3><div style="background:var(--surface);padding:1rem;border-radius:8px;font-family:monospace;font-size:.9rem">'
-        for k, v in params.items():
-            h += f'<div>{k}: <span style="color:var(--gold)">{v}</span></div>'
-        h += "</div></div>"
-
-    # Source code - link to GitHub
+    # 2. Source code - link to GitHub
     if source_code:
         if github_url:
             h += f'<div class="section"><h3>💻 策略代码</h3><div style="margin-bottom:.75rem"><a href="{github_url}" target="_blank" style="color:var(--gold);font-size:1rem">📂 在 GitHub 查看完整代码 →</a></div>'
@@ -916,7 +926,7 @@ pre.code code .line::before{{counter-increment:line;content:counter(line);positi
             h += '<div class="section"><h3>💻 策略代码</h3>'
         h += f'<pre class="code"><code class="language-python">{_code_with_lines(source_code)}</code></pre></div>'
 
-    # LLM Prompt - extract from source code
+    # 3. LLM Prompt - extract from source code
     llm_prompt = ""
     if source_code and 'SYSTEM_PROMPT' in source_code:
         import re
@@ -925,6 +935,16 @@ pre.code code .line::before{{counter-increment:line;content:counter(line);positi
             llm_prompt = m.group(1).strip()
     if llm_prompt:
         h += f'<div class="section"><h3>🤖 LLM 提示词</h3><pre class="code"><code class="language-markdown">{_code_with_lines(llm_prompt)}</code></pre></div>'
+
+    # 4. LLM Model
+    h += f'<div class="section"><h3>🧪 LLM 模型</h3><div style="background:var(--surface);padding:1rem;border-radius:8px;font-family:monospace;font-size:1rem;color:var(--gold)">{_html_escape(model)}</div></div>'
+
+    # 5. Params
+    if params:
+        h += '<div class="section"><h3>⚙️ 策略参数</h3><div style="background:var(--surface);padding:1rem;border-radius:8px;font-family:monospace;font-size:.9rem">'
+        for k, v in params.items():
+            h += f'<div>{k}: <span style="color:var(--gold)">{v}</span></div>'
+        h += "</div></div>"
 
     # Runs table
     if runs:
@@ -1083,12 +1103,11 @@ async def page_list():
             progress_cell = '<span class="badge running">运行中</span>'
         elif r.get("won"):
             progress_cell = '<span class="badge win">通关</span>'
+        elif r["status"] == "completed":
+            progress_cell = f'<span class="badge win">{_format_progress(r.get("progress"))}</span>'
         else:
             prog = r.get("progress") or ""
-            if prog:
-                progress_cell = f'<span class="badge loss">{prog}</span>'
-            else:
-                progress_cell = f'<span class="badge loss">Ante {r.get("final_ante", "?")}</span>'
+            progress_cell = f'<span class="badge loss">{_format_progress(prog) if prog else "Ante " + str(r.get("final_ante", "?"))}</span>'
 
         seed = r.get("seed") or "-"
         if len(seed) > 8:
