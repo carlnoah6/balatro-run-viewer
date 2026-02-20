@@ -1,0 +1,23 @@
+name: Deploy Run Viewer
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd /home/ubuntu/.openclaw/workspace/projects/balatro-run-viewer
+            git pull origin main
+            sudo systemctl restart balatro-viewer
+            echo "Deployed at $(date)"

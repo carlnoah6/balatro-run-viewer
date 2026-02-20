@@ -581,6 +581,13 @@ async def page_game_detail(run_code: str):
     if run.get("strategy_id"):
         strategy = await db_pool.fetchrow("SELECT * FROM balatro_strategies WHERE id = $1", run["strategy_id"])
 
+    # Score error stats
+    score_err = await db_pool.fetchrow(
+        """SELECT COUNT(*) as cnt, ROUND(AVG(ABS(score_error))::numeric * 100, 1) as avg_err,
+           ROUND(MAX(ABS(score_error))::numeric * 100, 1) as max_err
+           FROM balatro_screenshots WHERE run_id = $1
+           AND estimated_score IS NOT NULL AND actual_score IS NOT NULL""", row["id"])
+
     rc = run["run_code"]
     is_running = run["status"] == "running"
     dur = f'{round(run["duration_seconds"] / 60)}分钟' if run.get("duration_seconds") else "-"
@@ -601,12 +608,22 @@ async def page_game_detail(run_code: str):
 <div style="font-family:monospace;font-size:.9rem;color:var(--muted);margin:.5rem 0">种子: {run.get('seed') or '未知'} | 策略: {f'<a href="/balatro/strategy/{strategy["id"]}" style="color:var(--gold)">{_html_escape(strategy["name"])}</a>' if strategy else '未知'}</div>
 <div class="detail-stats">"""
 
+    # Score error display
+    if score_err and score_err["cnt"] > 0:
+        avg_e = float(score_err["avg_err"] or 0)
+        max_e = float(score_err["max_err"] or 0)
+        err_cls = "good" if avg_e < 20 else ("ok" if avg_e < 50 else "bad")
+        err_val = f'<span class="score-err {err_cls}">均{avg_e:.0f}% 峰{max_e:.0f}%</span>'
+    else:
+        err_val = "-"
+
     for v, l in [
         (f"Ante {run.get('final_ante', '?')}", "关卡"),
         (run.get("hands_played", 0), "出牌"),
         (run.get("discards_used", 0), "弃牌"),
         (run.get("purchases", 0), "购买"),
         (ratio, "Rule率"),
+        (err_val, "估分误差"),
         (dur, "耗时"),
         (cost, "LLM成本"),
     ]:
@@ -878,9 +895,23 @@ pre.code{{background:#0d1117;padding:1rem;border-radius:8px;overflow-x:auto;font
             h += f'<div>{k}: <span style="color:var(--gold)">{v}</span></div>'
         h += "</div></div>"
 
-    # Source code
+    # Source code - link to GitHub
     if source_code:
-        h += f'<div class="section"><h3>💻 策略代码</h3><pre class="code"><code>{_html_escape(source_code)}</code></pre></div>'
+        if github_url:
+            h += f'<div class="section"><h3>💻 策略代码</h3><div style="margin-bottom:.75rem"><a href="{github_url}" target="_blank" style="color:var(--gold);font-size:1rem">📂 在 GitHub 查看完整代码 →</a></div>'
+        else:
+            h += '<div class="section"><h3>💻 策略代码</h3>'
+        h += f'<pre class="code"><code>{_html_escape(source_code)}</code></pre></div>'
+
+    # LLM Prompt - extract from source code
+    llm_prompt = ""
+    if source_code and 'SYSTEM_PROMPT' in source_code:
+        import re
+        m = re.search(r'SYSTEM_PROMPT\s*=\s*"""(.*?)"""', source_code, re.DOTALL)
+        if m:
+            llm_prompt = m.group(1).strip()
+    if llm_prompt:
+        h += f'<div class="section"><h3>🤖 LLM 提示词</h3><pre class="code"><code>{_html_escape(llm_prompt)}</code></pre></div>'
 
     # Runs table
     if runs:
