@@ -1,4 +1,4 @@
-"""Balatro Run Viewer - FastAPI backend."""
+"""Balatro Run Viewer 🃏 - FastAPI backend."""
 
 import json
 import os
@@ -51,7 +51,7 @@ async def lifespan(app: FastAPI):
         await db_pool.close()
 
 
-app = FastAPI(title="Balatro Run Viewer", lifespan=lifespan)
+app = FastAPI(title="Balatro Run Viewer 🃏", lifespan=lifespan)
 
 # Serve screenshots as static files
 app.mount("/screenshots", StaticFiles(directory=str(SCREENSHOT_DIR)), name="screenshots")
@@ -607,7 +607,7 @@ async def page_game_detail(run_code: str):
 
     h = f"""<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{rc} - Balatro Run Viewer</title><style>{_base_css()}</style></head><body>
+<title>{rc} - Balatro Run Viewer 🃏</title><style>{_base_css()}</style></head><body>
 {_header()}<div class="container">
 <a class="back-btn" href="/balatro/">← 返回列表</a>
 <div class="detail-header"><h2>{icon} {rc}{status_badge}</h2>
@@ -623,7 +623,7 @@ async def page_game_detail(run_code: str):
     else:
         err_val = "-"
 
-    for v, l in [
+    for v, lbl in [
         (f"Ante {run.get('final_ante', '?')}", "关卡"),
         (run.get("hands_played", 0), "出牌"),
         (run.get("discards_used", 0), "弃牌"),
@@ -633,7 +633,7 @@ async def page_game_detail(run_code: str):
         (dur, "耗时"),
         (cost, "LLM成本"),
     ]:
-        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{l}</div></div>'
+        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{lbl}</div></div>'
     h += "</div></div>"
 
     # Jokers
@@ -893,8 +893,8 @@ pre.code code .line::before{{counter-increment:line;content:counter(line);positi
 
     # Stats
     h += '<div class="detail-stats">'
-    for v, l in [(total, "总局数"), (wins, "胜场"), (win_rate, "胜率"), (avg_ante, "平均Ante")]:
-        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{l}</div></div>'
+    for v, lbl in [(total, "总局数"), (wins, "胜场"), (win_rate, "胜率"), (avg_ante, "平均Ante")]:
+        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{lbl}</div></div>'
     h += "</div></div>"
 
     # Summary
@@ -978,8 +978,8 @@ async def page_seed_detail(seed_val: str):
 <div class="detail-header">
 <h2>🌱 种子: <span style="font-family:monospace">{_html_escape(seed_val)}</span></h2>
 <div class="detail-stats">"""
-    for v, l in [(total, "运行次数"), (wins, "胜场"), (best_ante, "最佳Ante"), (len(strategies_used), "策略数")]:
-        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{l}</div></div>'
+    for v, lbl in [(total, "运行次数"), (wins, "胜场"), (best_ante, "最佳Ante"), (len(strategies_used), "策略数")]:
+        h += f'<div class="stat"><div class="val">{v}</div><div class="lbl">{lbl}</div></div>'
     h += "</div></div>"
 
     if strategies_used:
@@ -1061,7 +1061,7 @@ async def page_list():
 
     h = f"""<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Balatro Run Viewer</title><style>{_base_css()}
+<title>Balatro Run Viewer 🃏</title><style>{_base_css()}
 .tabs{{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid #333}}
 .tab{{padding:.6rem 1.5rem;cursor:pointer;font-size:1rem;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}}
 .tab:hover{{color:var(--text)}}
