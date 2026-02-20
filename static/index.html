@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balatro Run Viewer</title>
+<style>
+:root{--bg:#1a1a2e;--surface:#16213e;--card:#0f3460;--accent:#e94560;--gold:#f5c518;--text:#eee;--muted:#aaa;--win:#4ade80;--loss:#f87171}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:1400px;margin:0 auto;padding:1rem}
+header{background:var(--surface);padding:1rem 0;border-bottom:2px solid var(--accent);margin-bottom:1.5rem}
+header .container{display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:1.5rem;cursor:pointer}header h1 span{color:var(--accent)}
+
+.run-table{width:100%;border-collapse:collapse}
+.run-table th{text-align:left;padding:.5rem .75rem;color:var(--muted);font-size:.8rem;text-transform:uppercase;border-bottom:1px solid #333}
+.run-table td{padding:.6rem .75rem;border-bottom:1px solid #222}
+.run-table tbody tr:hover{background:var(--surface);cursor:pointer}
+.run-code{color:var(--gold);font-family:monospace;font-weight:bold}
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600}
+.badge.win{background:#166534;color:var(--win)}
+.badge.loss{background:#7f1d1d;color:var(--loss)}
+.badge.running{background:#1e3a5f;color:#60a5fa;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+.back-btn{display:inline-block;margin-bottom:1rem;padding:.4rem .8rem;background:var(--surface);border:1px solid #333;border-radius:6px;cursor:pointer;color:var(--text);font-size:.85rem;text-decoration:none}
+.detail-layout{display:flex;gap:1.5rem;align-items:flex-start}
+.detail-main{flex:1;min-width:0}
+.detail-header{background:var(--surface);padding:1.25rem;border-radius:12px;margin-bottom:1.5rem}
+.detail-header h2{margin-bottom:.5rem;font-size:1.4rem}
+.detail-stats{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.75rem}
+.detail-stats .stat{background:var(--card);padding:.5rem .75rem;border-radius:8px;text-align:center;min-width:80px}
+.detail-stats .stat .val{font-size:1.2rem;font-weight:bold;color:var(--gold)}
+.detail-stats .stat .lbl{font-size:.7rem;color:var(--muted)}
+
+.joker-grid{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.joker-card{display:flex;gap:.75rem;background:var(--surface);padding:.75rem;border-radius:10px;min-width:280px;max-width:400px;flex:1}
+.joker-card img{width:64px;height:64px;object-fit:contain;flex-shrink:0}
+.joker-card .joker-info{flex:1}
+.joker-card .name-en{font-size:.95rem;font-weight:600;color:var(--text)}
+.joker-card .name-zh{font-size:.85rem;color:var(--gold);margin-top:2px}
+.joker-card .effect{font-size:.8rem;color:var(--muted);margin-top:4px;line-height:1.3}
+
+.feed{display:flex;flex-direction:column;gap:1.5rem}
+.feed-entry{background:var(--surface);border-radius:12px;overflow:hidden}
+.feed-entry .caption{padding:.75rem 1.25rem;color:#fff;font-size:1.25rem;line-height:1.6;font-weight:500}
+.feed-entry .caption .source-tag{font-size:.85rem;padding:.2rem .5rem;border-radius:4px;font-weight:600;margin-left:.5rem;vertical-align:middle}
+.feed-entry .caption .source-tag.rule{background:#1e3a5f;color:#60a5fa}
+.feed-entry .caption .source-tag.llm{background:#3b1f5e;color:#c084fc}
+.feed-entry img.screenshot{width:100%;display:block;cursor:pointer}
+.score-bar{display:flex;align-items:center;gap:.75rem;padding:.4rem 1.25rem .6rem;font-size:1rem;font-family:monospace}
+.score-est{color:var(--muted)}
+.score-arrow{color:#555}
+.score-act{color:var(--text);font-weight:600}
+.score-err{padding:.15rem .4rem;border-radius:4px;font-size:.85rem;font-weight:600}
+.score-err.good{background:#166534;color:var(--win)}
+.score-err.ok{background:#854d0e;color:#fbbf24}
+.score-err.bad{background:#7f1d1d;color:var(--loss)}
+
+.toc{position:sticky;top:1rem;width:200px;flex-shrink:0;background:var(--surface);border-radius:12px;padding:.75rem;max-height:calc(100vh - 2rem);overflow-y:auto}
+.toc-title{font-size:.85rem;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:.5rem;padding-bottom:.5rem;border-bottom:1px solid #333}
+.toc-ante{font-size:.95rem;font-weight:700;color:var(--gold);padding:.5rem .5rem;margin-top:.75rem;cursor:pointer;border-radius:4px;transition:background .15s}
+.toc-ante:first-child{margin-top:0}
+.toc-ante:hover{background:var(--card)}
+.toc-ante.active{background:var(--card);color:#fff}
+.toc-blind{font-size:.85rem;color:var(--muted);padding:.3rem .5rem .3rem 1.25rem;cursor:pointer;border-radius:4px;transition:all .15s}
+.toc-blind:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.toc-blind.active{color:var(--text);background:var(--card);font-weight:600}
+
+.lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:100;justify-content:center;align-items:center}
+.lightbox.active{display:flex}
+.lightbox img{max-width:95%;max-height:95%;object-fit:contain}
+.lightbox .close{position:absolute;top:1rem;right:1.5rem;font-size:2rem;color:#fff;cursor:pointer}
+
+.hidden{display:none!important}
+.empty{text-align:center;padding:3rem;color:var(--muted)}
+.pagination{display:flex;gap:.5rem;justify-content:center;margin-top:1.5rem}
+.pagination button{background:var(--surface);color:var(--text);border:1px solid #333;padding:.4rem .75rem;border-radius:6px;cursor:pointer}
+.pagination button.active{background:var(--accent);border-color:var(--accent)}
+.pagination button:disabled{opacity:.3;cursor:default}
+.section{margin-bottom:1.5rem}.section h3{margin-bottom:.75rem;font-size:1.1rem}
+.blind-divider{padding:.75rem 1rem;font-size:1.1rem;font-weight:700;color:var(--gold);border-bottom:1px solid #333}
+
+@media(max-width:768px){
+  .detail-layout{flex-direction:column}
+  .toc{display:none}
+}
+</style>
+</head>
+<body>
+<header><div class="container"><h1 onclick="navigateTo('')">🃏 <span>Balatro</span> Run Viewer</h1></div></header>
+<div class="container" id="app"></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()"><span class="close">&times;</span><img id="lightbox-img" src="" alt=""></div>
+<script src="app.js?v=20260220d"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test</title>
+<style>body{background:#1a1a2e;color:#eee;font-family:sans-serif;padding:1rem}
+img{width:100%;max-width:600px;display:block;margin:.5rem 0}
+.card{background:#16213e;padding:1rem;border-radius:8px;margin:.5rem 0}
+</style></head><body>
+<h2>🃏 Run 20260220-007 Test</h2>
+<div id="out">Loading...</div>
+<script>
+fetch('/balatro/api/runs/20').then(r=>r.json()).then(d=>{
+  let h='<div class="card">Status: '+d.run.status+' | Ante: '+d.run.final_ante+' | Screenshots: '+d.screenshots.length+'</div>';
+  d.screenshots.forEach((s,i)=>{
+    const url='/balatro/screenshots/'+d.run.run_code+'/screenshots/'+s.filename;
+    h+='<div class="card"><div>'+(s.caption||s.event_type)+'</div><img src="'+url+'" onerror="this.alt=\'load failed\'"></div>';
+  });
+  document.getElementById('out').innerHTML=h;
+}).catch(e=>{document.getElementById('out').textContent='Error: '+e});
+</script></body></html>

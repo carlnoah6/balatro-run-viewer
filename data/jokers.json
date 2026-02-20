@@ -1,0 +1,290 @@
+[
+  {
+    "name_en": "Joker",
+    "name_zh": "小丑",
+    "effect_en": "+4 Mult",
+    "effect_zh": "+4 倍率",
+    "rarity": "Common",
+    "price": 2,
+    "image": ""
+  },
+  {
+    "name_en": "Greedy Joker",
+    "name_zh": "贪婪小丑",
+    "effect_en": "+3 Mult for each played Diamond",
+    "effect_zh": "每打出一张方块+3倍率",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Lusty Joker",
+    "name_zh": "色欲小丑",
+    "effect_en": "+3 Mult for each played Heart",
+    "effect_zh": "每打出一张红心+3倍率",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Wrathful Joker",
+    "name_zh": "愤怒小丑",
+    "effect_en": "+3 Mult for each played Spade",
+    "effect_zh": "每打出一张黑桃+3倍率",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Gluttonous Joker",
+    "name_zh": "暴食小丑",
+    "effect_en": "+3 Mult for each played Club",
+    "effect_zh": "每打出一张梅花+3倍率",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Jolly Joker",
+    "name_zh": "快乐小丑",
+    "effect_en": "+8 Mult if hand contains a Pair",
+    "effect_zh": "手牌含对子时+8倍率",
+    "rarity": "Common",
+    "price": 3,
+    "image": ""
+  },
+  {
+    "name_en": "Zany Joker",
+    "name_zh": "滑稽小丑",
+    "effect_en": "+12 Mult if hand contains Three of a Kind",
+    "effect_zh": "手牌含三条时+12倍率",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Mad Joker",
+    "name_zh": "疯狂小丑",
+    "effect_en": "+10 Mult if hand contains Two Pair",
+    "effect_zh": "手牌含两对时+10倍率",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Crazy Joker",
+    "name_zh": "狂野小丑",
+    "effect_en": "+12 Mult if hand contains Straight",
+    "effect_zh": "手牌含顺子时+12倍率",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Droll Joker",
+    "name_zh": "诙谐小丑",
+    "effect_en": "+10 Mult if hand contains Flush",
+    "effect_zh": "手牌含同花时+10倍率",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Sly Joker",
+    "name_zh": "狡猾小丑",
+    "effect_en": "+50 Chips if hand contains a Pair",
+    "effect_zh": "手牌含对子时+50筹码",
+    "rarity": "Common",
+    "price": 3,
+    "image": ""
+  },
+  {
+    "name_en": "Wily Joker",
+    "name_zh": "机智小丑",
+    "effect_en": "+100 Chips if hand contains Three of a Kind",
+    "effect_zh": "手牌含三条时+100筹码",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Clever Joker",
+    "name_zh": "聪明小丑",
+    "effect_en": "+80 Chips if hand contains Two Pair",
+    "effect_zh": "手牌含两对时+80筹码",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Devious Joker",
+    "name_zh": "狡诈小丑",
+    "effect_en": "+100 Chips if hand contains Straight",
+    "effect_zh": "手牌含顺子时+100筹码",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Crafty Joker",
+    "name_zh": "巧妙小丑",
+    "effect_en": "+80 Chips if hand contains Flush",
+    "effect_zh": "手牌含同花时+80筹码",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Half Joker",
+    "name_zh": "半个小丑",
+    "effect_en": "+20 Mult if hand has 3 or fewer cards",
+    "effect_zh": "手牌≤3张时+20倍率",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Walkie Talkie",
+    "name_zh": "对讲机",
+    "effect_en": "Each 10 or 4 gives +10 Chips and +4 Mult",
+    "effect_zh": "每张10或4给+10筹码和+4倍率",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Green Joker",
+    "name_zh": "绿色小丑",
+    "effect_en": "+1 Mult per hand played, -1 per discard",
+    "effect_zh": "每出牌+1倍率，每弃牌-1倍率",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Blue Joker",
+    "name_zh": "蓝色小丑",
+    "effect_en": "+2 Chips per remaining card in deck",
+    "effect_zh": "牌堆每剩1张+2筹码",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Red Card",
+    "name_zh": "红牌",
+    "effect_en": "+3 Mult when Boss Blind is defeated",
+    "effect_zh": "击败Boss盲注时+3倍率",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Banner",
+    "name_zh": "旗帜",
+    "effect_en": "+30 Chips per remaining discard",
+    "effect_zh": "每剩余弃牌次数+30筹码",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Mystic Summit",
+    "name_zh": "神秘之巅",
+    "effect_en": "+15 Mult when 0 discards left",
+    "effect_zh": "弃牌次数为0时+15倍率",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Supernova",
+    "name_zh": "超新星",
+    "effect_en": "+1 Mult per hand type played this run",
+    "effect_zh": "本局每种打过的牌型+1倍率",
+    "rarity": "Common",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Ride the Bus",
+    "name_zh": "搭公车",
+    "effect_en": "+1 Mult per consecutive hand without face card",
+    "effect_zh": "连续不含花牌的手牌每手+1倍率",
+    "rarity": "Common",
+    "price": 6,
+    "image": ""
+  },
+  {
+    "name_en": "Abstract Joker",
+    "name_zh": "抽象小丑",
+    "effect_en": "+3 Mult per Joker",
+    "effect_zh": "每个小丑+3倍率",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  },
+  {
+    "name_en": "Stencil Joker",
+    "name_zh": "模板小丑",
+    "effect_en": "x1 Mult per empty Joker slot",
+    "effect_zh": "每个空小丑位x1倍率",
+    "rarity": "Uncommon",
+    "price": 8,
+    "image": ""
+  },
+  {
+    "name_en": "Loyalty Card",
+    "name_zh": "会员卡",
+    "effect_en": "x4 Mult every 6 hands played",
+    "effect_zh": "每6手出牌x4倍率",
+    "rarity": "Uncommon",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Hiker",
+    "name_zh": "徒步者",
+    "effect_en": "Every played card permanently gains +5 Chips",
+    "effect_zh": "每张打出的牌永久+5筹码",
+    "rarity": "Uncommon",
+    "price": 5,
+    "image": ""
+  },
+  {
+    "name_en": "Bloodstone",
+    "name_zh": "血石",
+    "effect_en": "1 in 3 chance for x1.5 Mult (Hearts)",
+    "effect_zh": "红心牌1/3概率x1.5倍率",
+    "rarity": "Uncommon",
+    "price": 7,
+    "image": ""
+  },
+  {
+    "name_en": "Arrowhead",
+    "name_zh": "箭头",
+    "effect_en": "+50 Chips per Spade",
+    "effect_zh": "每张黑桃+50筹码",
+    "rarity": "Uncommon",
+    "price": 7,
+    "image": ""
+  },
+  {
+    "name_en": "Onyx Agate",
+    "name_zh": "缟玛瑙",
+    "effect_en": "+7 Mult per Club",
+    "effect_zh": "每张梅花+7倍率",
+    "rarity": "Uncommon",
+    "price": 7,
+    "image": ""
+  },
+  {
+    "name_en": "Swashbuckler",
+    "name_zh": "海盗",
+    "effect_en": "Mult = sell value of all owned Jokers",
+    "effect_zh": "倍率=所有小丑的卖出价之和",
+    "rarity": "Common",
+    "price": 4,
+    "image": ""
+  }
+]
