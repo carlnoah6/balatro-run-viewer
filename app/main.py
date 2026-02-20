@@ -570,6 +570,21 @@ def _code_with_lines(code: str) -> str:
     lines = escaped.split("\n")
     return "\n".join(f'<span class="line">{l}</span>' for l in lines)
 
+BLIND_LABELS = {1: "小盲", 2: "大盲", 3: "Boss"}
+
+def _format_progress(prog: str) -> str:
+    """Format progress number: '301' → 'A3-小盲', '403' → 'A4-Boss'."""
+    if not prog:
+        return "-"
+    try:
+        n = int(prog)
+        ante = n // 100
+        blind = n % 100
+        blind_name = BLIND_LABELS.get(blind, str(blind))
+        return f"A{ante}-{blind_name}"
+    except (ValueError, TypeError):
+        return prog
+
 
 @app.get("/game/{run_code}", response_class=HTMLResponse)
 async def page_game_detail(run_code: str):
@@ -1088,12 +1103,11 @@ async def page_list():
             progress_cell = '<span class="badge running">运行中</span>'
         elif r.get("won"):
             progress_cell = '<span class="badge win">通关</span>'
+        elif r["status"] == "completed":
+            progress_cell = f'<span class="badge win">{_format_progress(r.get("progress"))}</span>'
         else:
             prog = r.get("progress") or ""
-            if prog:
-                progress_cell = f'<span class="badge loss">{prog}</span>'
-            else:
-                progress_cell = f'<span class="badge loss">Ante {r.get("final_ante", "?")}</span>'
+            progress_cell = f'<span class="badge loss">{_format_progress(prog) if prog else "Ante " + str(r.get("final_ante", "?"))}</span>'
 
         seed = r.get("seed") or "-"
         if len(seed) > 8:
