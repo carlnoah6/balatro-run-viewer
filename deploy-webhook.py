@@ -29,13 +29,14 @@ class DeployHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(b'Forbidden')
             return
 
-        # Deploy
+        # Deploy via Docker
         try:
             subprocess.run(["git", "pull", "origin", "main"], cwd=REPO_DIR, timeout=30, check=True)
-            subprocess.run(["sudo", "systemctl", "restart", "balatro-viewer"], timeout=10, check=True)
+            subprocess.run(["docker", "compose", "build"], cwd=REPO_DIR, timeout=120, check=True)
+            subprocess.run(["docker", "compose", "up", "-d"], cwd=REPO_DIR, timeout=30, check=True)
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(b'{"ok": true, "message": "deployed"}')
+            self.wfile.write(b'{"ok": true, "message": "deployed via docker"}')
             print(f"[deploy] Success")
         except Exception as e:
             self.send_response(500)

@@ -1,0 +1,11 @@
+services:
+  viewer:
+    build: .
+    container_name: balatro-viewer
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8191:8191"
+    env_file: .env
+    volumes:
+      - ./data:/app/data:ro
+      - /home/ubuntu/balatro-env/runs:/app/runs:ro

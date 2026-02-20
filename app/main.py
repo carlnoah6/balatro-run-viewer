@@ -14,7 +14,7 @@ from contextlib import asynccontextmanager
 
 # Config
 NEON_CONFIG = Path(__file__).parent.parent.parent.parent / "data" / "neon-config.json"
-SCREENSHOT_DIR = Path("/home/ubuntu/balatro-screenshots")
+SCREENSHOT_DIR = Path(os.environ.get("SCREENSHOT_DIR", "/home/ubuntu/balatro-screenshots"))
 JOKER_DATA = Path(__file__).parent.parent / "data" / "jokers.json"
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB
 ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
@@ -36,6 +36,8 @@ db_pool: asyncpg.Pool | None = None
 
 
 def get_database_url() -> str:
+    if os.environ.get("DATABASE_URL"):
+        return os.environ["DATABASE_URL"]
     with open(NEON_CONFIG) as f:
         return json.load(f)["database_url"]
 
